@@ -38,6 +38,7 @@ public class Spawner : MonoBehaviour
 
     private void SpawnEnemy(Transform spawnPoint)
     {
-        Instantiate(_enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        Enemy enemy = Instantiate(_enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        enemy.AssignDirectional(Vector3.forward);
     }
 }
