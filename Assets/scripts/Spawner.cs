@@ -1,35 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
     [SerializeField] private float _spawnInterval = 2f;
     [SerializeField] private Enemy _enemyPrefab;
-    [SerializeField] private List<Transform> _spawnPoints; 
+    [SerializeField] private List<Transform> _spawnPoints;
+
+    private WaitForSeconds _wait;
 
     private void Start()
     {
-        StartCoroutine(SpawnEnemies());
+        if (_spawnPoints.Count > 0)
+        {
+            _wait = new WaitForSeconds(_spawnInterval);
+
+            StartCoroutine(SpawnEnemies());
+        }
     }
 
     private IEnumerator SpawnEnemies()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(_spawnInterval);
+        float elapsedTime = 0f;
 
-            if (_spawnPoints.Count > 0)
-            {
-                Transform spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Count)];
-                SpawnEnemy(spawnPoint);
-            }
+        while (elapsedTime < _spawnInterval)
+        {
+            elapsedTime += Time.deltaTime / 2;
+
+            Transform spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Count)];
+            SpawnEnemy(spawnPoint);
+
+            yield return _wait;
         }
     }
 
     private void SpawnEnemy(Transform spawnPoint)
     {
-        Enemy enemy = Instantiate(_enemyPrefab, spawnPoint.position, spawnPoint.rotation);
-        enemy.SetDirection(spawnPoint.forward);
+        Instantiate(_enemyPrefab, spawnPoint.position, spawnPoint.rotation);
     }
 }
